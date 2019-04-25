@@ -1,3 +1,4 @@
 private/config.js
 design/
 node_modules/
+.env
