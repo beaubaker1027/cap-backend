@@ -20,7 +20,6 @@ mongoose.connect(config.mLab.path, {useNewUrlParser: true })
 .catch((err) => {
   return console.log('couldn\'t connect to database\nError: '+err)
 });
-
 //creating an instance of express
 const app = express();
 
