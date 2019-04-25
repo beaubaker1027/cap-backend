@@ -17,6 +17,11 @@ const containerSchema = new Schema({
     trim: true,
     default: 'A container without any identifiers'
   },
+  username:{
+    type: String,
+    required: true,
+    trim: true,
+  },
   contents:[{
     type: Schema.Types.ObjectId,
     ref: 'item'
@@ -27,32 +32,56 @@ const containerSchema = new Schema({
   timestamps: true
 });
 
-//var container = mongoose.model('container', containerSchema);
+var Container = mongoose.model('container', containerSchema);
 
 
 module.exports = containerSchema;
 
-module.exports.findContainerById = (id, containers, callback)=>{
-  let results = containers.filter(el => el.id === id);
-  if(results.length > 1) return callback(`Error: More than One Container Found`, null);
-  !results
-  ?callback(`Error: No containers containing id ${id}`, null)
-  :callback(null, results);
+module.exports.findContainerById = (id, callback)=>{
+  Container.findById(id, (err, doc)=>{
+    if(err){
+      return callback(err, null);
+    }
+    callback(null, doc);
+  })
+}
+
+module.exports.findContainersByUsername = (username, callback)=>{
+  Container.find({username:username}, (err, docs)=>{
+    if(err){
+      return callback(err, null);
+    }
+    return callback(null, docs)
+  })
 }
 
 module.exports.addContainer = (user, container, callback) => {
-  user.containers.unshift(container);
-  user.save(callback)
+  container.username = user;
+  let newContainer = new Container(container);
+  newContainer.save((err, doc)=>{
+    if(err) {
+      return callback(err, null);
+    }
+    console.log(doc+'saved');
+    return callback(null, doc);
+  })
 }
 
-module.exports.updateContainer = (user, container, updatedContainer, callback) => {
-  const index = user.containers.indexOf(container);
-  user.container[index] = Object.assign(container, updatedContainer)
-  user.save(callback);
+module.exports.updateContainer = (id, updatedContainer, callback) => {
+  Container.findOneAndUpdate({_id:id}, updatedContainer,{new:true}, (err, doc)=>{
+    if(err){
+      return callback(err, null);
+    }
+    return callback(null, doc);
+  })
 }
 
-module.exports.deleteContainer = (user, container, callback)=>{
-  const index = user.containers.indexOf(container);
-  const removed = user.containers.splice(index, 1)
-  user.save(callback);
+module.exports.deleteContainer = (id, callback)=>{
+  console.log('ID:',id);
+  Container.findOneAndDelete({_id:id}, (err, doc)=>{
+    if(err){
+      return callback(err, null);
+    }
+    return callback(null, doc);
+  })
 }

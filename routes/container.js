@@ -4,53 +4,52 @@ const router = express.Router();
 
 const ContainerModel = require('../models/containerModel');
 
-router.get('/', passport.authenticate('jwt', {session:false}), (req, res) => {
-  const { containers } = req.user
-  return res.json({success: true, msg:'Returned Users\' Containers', data:containers})
+router.get('/', /*passport.authenticate('jwt', {session:false}),*/ (req, res) => {
+  const { username } = req
+  ContainerModel.findContainersByUsername(username || 'beaubaker', (err, response)=>{
+    if(err) {
+      return res.json({success:false, msg:err})
+    }
+    return res.json({success:true, msg:'Returned Users\' Containers', data:response});
+  })
 });
 
-router.post('/', passport.authenticate('jwt', {session:false}), (req, res, next) => {
-  const { container } = req.body
-  ContainerModel.addContainer(req.user, container, (err, user) => {
+router.post('/', /*passport.authenticate('jwt', {session:false}),*/ (req, res, next) => {
+  const { container, user } = req.body
+  console.log(container);
+  console.log(user);
+  ContainerModel.addContainer(/*req.user*/user, container, (err, user) => {
     if(err) return res.json({success:false, msg:err})
     return res.json({success:true, msg:'Container Added to User', user})
   });
 });
 
-router.get('/:id', passport.authenticate('jwt', {session:false}), (req,res,next) => {
-  const { containers } = req.user
+router.get('/:id', /*passport.authenticate('jwt', {session:false}), */(req,res,next) => {
   const {id} = req.params
-  ContainerModel.findContainerById(id, containers, (err, data) => {
+  ContainerModel.findContainerById(id, (err, data) => {
     if(err) return res.json({success:false, msg:err})
     return res.json({success:true, msg:'Retrieved Container', data: data});
   })
 });
 
-router.put('/:id', passport.authenticate('jwt', {session:false}), (req,res,next) => {
-  const { user } = req;
-  const { containers } = req.user;
+router.put('/:id', /*passport.authenticate('jwt', {session:false}),*/ (req,res,next) => {
   const { updatedContainer } = req.body
   const {id} = req.params;
-  ContainerModel.findContainerById(id, containers, (err, data) => {
+  ContainerModel.updateContainer(id, updatedContainer, (err, data) => {
     if(err) return res.json({success:false, msg:err})
-    ContainerModel.updateContainer(user, data, container, (err, user) => {
-      if(err) return res.json({success:false, msg:err})
-      return res.json({success:true, msg:'Container Updated', user})
-    });
-  })
+    return res.json({success:true, msg:'Container Updated', data:data})
+  });
 });
 
-/*router.delete('/:id', passport.authenticate('jwt', {session:false}), (req,res,next)=>{
-  const { containers } = req.user;
+router.delete('/:id', /*passport.authenticate('jwt', {session:false}),*/ (req,res,next)=>{
   const {id} = req.params;
-  ContainerModel.findContainerById(id, containers, (err, data) => {
-    if(err) return res.json({success:false, msg:err})
-    ContainerModel.updateContainer(user, data, container, (err, user) => {
-      if(err) return res.json({success:false, msg:err})
-      return res.json({success:true, msg:'Container Updated', user})
-    });
+  ContainerModel.deleteContainer(id, (err, data) => {
+    if(err){
+      return res.json({success:false, msg:err});
+    }
+    return res.json({success:true, msg:'Container Deleted', data: data});
   })
-})*/
+});
 
 
 
