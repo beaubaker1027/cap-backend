@@ -44,6 +44,7 @@ app.get('/express_backend', (req, res) => {
 app.use('/auth', auth);
 app.use('/user', user);
 app.use('/container', container);
+app.use('/item', item);
 app.use('/settings', settings);
 
 //app listener

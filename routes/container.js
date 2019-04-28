@@ -5,8 +5,9 @@ const router = express.Router();
 const ContainerModel = require('../models/containerModel');
 
 router.get('/', /*passport.authenticate('jwt', {session:false}),*/ (req, res) => {
-  const { username } = req
+  const { username } = req.body
   ContainerModel.findContainersByUsername(username || 'beaubaker', (err, response)=>{
+    console.log(response);
     if(err) {
       return res.json({success:false, msg:err})
     }

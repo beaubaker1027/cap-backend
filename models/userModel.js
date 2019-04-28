@@ -31,7 +31,7 @@ const userSchema = new Schema({
     trim: true,
     default: 'An undescribed user with inventory that needs managed',
   },
-  containers: [containerSchema],
+  //containers: [containerSchema],
   settings: [settingsSchema],
 },
 {
@@ -49,10 +49,10 @@ userSchema.pre('save', (next) => {
   next();
 })
 
-//populate data after a find data request
+/*//populate data after a find data request
 userSchema.post('find', (result)=>{
   result.populate('containers.content')
-})
+})*/
 
 //instantiation of the user model
 var user = mongoose.model('user', userSchema);
@@ -71,7 +71,7 @@ module.exports.getUserByUsername = function(username, callback){
   user.findOne(query, callback);
 }
 
-//find container
+/*//find container
 module.exports.findContainerbyName = (username, name, callback) => {
   const query = {username:username, containers: { name: name}}
   user.findOne(query, callback);
@@ -96,7 +96,7 @@ module.exports.findContainersbyItem = (username, item, callback) => {
 module.exports.findItemsinContainer = (name, callback) => {
   let itemArray = [];
   user.find()
-}
+}*/
 
 //create encrypted password
 module.exports.addUser = function(newUser, callback){

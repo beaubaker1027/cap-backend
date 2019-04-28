@@ -15,10 +15,12 @@ const itemSchema = new Schema({
     type: String,
     required: false,
     trim: true,
-    default: 'A container without any identifiers'
+    default: 'An item without any identifiers'
   }
+},
+{
+  runSettersOnQuery: true,
+  timestamps: true
 });
 
-var item = mongoose.model('item', itemSchema);
-
-module.exports = item;
+module.exports = itemSchema;

@@ -16,6 +16,11 @@ const settingsSchema = new Schema({
     required: true,
     trim: true,
   },
+  username:{
+    type: String,
+    required: true,
+    trim: true,
+  },
   feedback: [feedbackSchema]
 });
 
